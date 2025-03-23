@@ -13,6 +13,11 @@ export interface Evento {
     date: string; // Added date property
 }
 
+export interface UsuraioEventos {
+    idUsuraio: number,
+    eventos: Evento[]
+}
+
 interface EventContextType {
     eventos: Evento[],
     agregarEvento: (evento: Omit<Evento, "id">) => void;
@@ -22,6 +27,8 @@ interface EventContextType {
     dateSelected: Dayjs;
     setDateSelected: React.Dispatch<React.SetStateAction<Dayjs>>
     refreshFlag: boolean;
+    currentUserId: number;
+    setCurrentUserId: React.Dispatch<React.SetStateAction<number>>
 }
 
 export const EventContext = createContext<EventContextType | undefined>(undefined);

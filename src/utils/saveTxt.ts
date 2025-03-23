@@ -1,43 +1,25 @@
-import { Evento } from "../context/Eventcontext"
+import { Evento, UsuraioEventos } from "../context/Eventcontext";
+
+export const saveTxt = (data: UsuraioEventos) => {
+    const existingData = localStorage.getItem('eventos');
+    const parsedData = Array.isArray(existingData ? JSON.parse(existingData || '') : []) 
+        ? JSON.parse(existingData || '') 
+        : [];
+    
+    const updatedData = parsedData.filter((item: { idUsuraio: number }) => item.idUsuraio !== data.idUsuraio);
+    updatedData.push(data);
+
+    localStorage.setItem('eventos', JSON.stringify(updatedData));
+};
+
+export const getData = (idUser: number): Evento[] => {
+    const userData = localStorage.getItem('eventos');
+    const parsedData = Array.isArray(userData ? JSON.parse(userData || '') : []) 
+        ? JSON.parse(userData || '') 
+        : [];
+    const userEvents = parsedData.find((item: { idUsuraio: number }) => item.idUsuraio === idUser);
+    
+    return userEvents ? userEvents.eventos : [];
+};
 
 
-export const saveTxt = (data: Evento[]) => {
-
-    localStorage.setItem('eventos', JSON.stringify(data))
-
-}
-
-
-const eventosFake = [
-    {
-        idUsuraio: 1,
-        eventos: [
-            {
-                name: 'reunion',
-                date: '2025-03-23T10:00:00.000Z',
-                id: 1
-            },
-            {
-                name: 'llamada',
-                date: '2025-03-23T08:00:00.000Z',
-                id: 2
-            }
-        ]
-    },
-    {
-        idUsuraio: 2,
-        eventos: [
-            {
-                name: 'revisar alcance proyecto',
-                date: '2025-03-26T10:00:00.000Z',
-                id: 1
-            },
-            {
-                name: 'llamada con jefe ',
-                date: '2025-03-25T08:00:00.000Z',
-                id: 2
-            }
-            
-        ]
-    },
-]

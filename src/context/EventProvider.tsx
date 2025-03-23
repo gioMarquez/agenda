@@ -1,7 +1,7 @@
 import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import { EventContext, } from "./Eventcontext";
-import { saveTxt } from "../utils/saveTxt";
+import { getData, saveTxt } from "../utils/saveTxt";
 
 export interface Evento {
     id: number;
@@ -10,33 +10,39 @@ export interface Evento {
 }
 
 export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [currentUserId, setCurrentUserId] = useState<number>(1);
+    const [eventos, setEventos] = useState<Evento[]>(() => getData(1)); // Inicializa con datos de localStorage
     const [dateSelected, setDateSelected] = useState<Dayjs>(dayjs());
-    const [eventos, setEventos] = useState<Evento[]>([]);
     const [firstDayMonthName, setFirstDayMonthName] = useState<string>("");
-    const [refreshFlag, setRefreshFlag] = useState<boolean>(false); // Added refresh flag
+    const [refreshFlag, setRefreshFlag] = useState<boolean>(false);
 
     const agregarEvento = (evento: Omit<Evento, "id">) => {
-        setEventos([...eventos, { ...evento, id: eventos.length + 1 }]);
-        setRefreshFlag((prev) => !prev); // Toggle refresh flag
+        const newId = eventos.length > 0 ? Math.max(...eventos.map(e => e.id)) + 1 : 1; // Calcula el ID único
+        setEventos([...eventos, { ...evento, id: newId }]);
+        setRefreshFlag((prev) => !prev);
     };
 
     const eliminarEvento = (id: number) => {
         setEventos(eventos.filter(evento => evento.id !== id));
-        setRefreshFlag((prev) => !prev); // Toggle refresh flag
+        setRefreshFlag((prev) => !prev);
     };
 
     useEffect(() => {
-        if (eventos.length > 0) {  // Solo guardar si hay eventos
-            saveTxt(eventos);
+        const eventosGuardados = getData(currentUserId);
+        if (eventosGuardados.length > 0) {
+            setEventos(eventosGuardados); // Carga los datos del usuario actual
+        } else {
+            // Inicializa con un objeto vacío si no hay datos para el usuario
+            const userData = { idUsuraio: currentUserId, eventos: [] };
+            saveTxt(userData);
+            setEventos([]); // Asegúrate de que el estado esté vacío
         }
-    }, [eventos])
+    }, [currentUserId]);
 
     useEffect(() => {
-        const eventosGuardados = localStorage.getItem('eventos');
-        if (eventosGuardados) {
-            setEventos(JSON.parse(eventosGuardados));
-        }
-    }, [])
+        const userData = { idUsuraio: currentUserId, eventos };
+        saveTxt(userData); // Guarda los datos cada vez que los eventos cambian
+    }, [eventos, currentUserId]);
 
     return (
         <EventContext.Provider value={{
@@ -47,7 +53,9 @@ export const EventProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             agregarEvento,
             eliminarEvento,
             setDateSelected,
-            refreshFlag // Expose refresh flag
+            refreshFlag,
+            currentUserId,
+            setCurrentUserId
         }}>
             {children}
         </EventContext.Provider>

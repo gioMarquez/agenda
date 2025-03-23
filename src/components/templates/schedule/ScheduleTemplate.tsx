@@ -10,7 +10,7 @@ import { Toaster } from "react-hot-toast"
 const ScheduleTemplate = () => {
     const [users, setUsers] = useState<Usuario[]>([])
 
-    const { eventos } = useEventContext()
+    const { eventos, setCurrentUserId } = useEventContext()
 
     console.log("eventos", eventos)
     console.log("users", users)
@@ -21,7 +21,7 @@ const ScheduleTemplate = () => {
         axios.get("https://rickandmortyapi.com/api/character")
             .then(response => {
                 // console.log("datos recibidos:", response.data)
-                setUsers(response.data.results.filter((user: Usuario) => user.id <= 4))
+                setUsers(response.data.results.filter((user: Usuario) => user.id <= 2))
             }).catch(error => {
                 console.error("Error al obtener los datos", error)
             })
@@ -35,13 +35,13 @@ const ScheduleTemplate = () => {
                 <div>
 
                     <h1 className="text-xl">Agenda</h1>
-                    
+
                 </div>
                 <Select
                     native
                     onChange={(e) => {
                         const selectedId = e.target.value;
-                        console.log("Selected ID:", selectedId);
+                        setCurrentUserId(Number(selectedId));
                     }}
                 >
                     <option value="" disabled>
