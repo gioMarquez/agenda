@@ -4,9 +4,11 @@ import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete'; // 🆕 Ícono de eliminar
 import { Evento } from '../../../../context/Eventcontext';
 import { useEventContext } from '../../../../context/useEventContext';
 import dayjs from 'dayjs';
+import toast from 'react-hot-toast';
 
 const modalStyle = {
     position: 'absolute',
@@ -28,37 +30,16 @@ interface BasicModalProps {
 }
 
 export default function DetailedEventModal({ isOpen, setIsOpen }: BasicModalProps) {
-    const { dateSelected } = useEventContext();
-
-    const eventos = [
-        {
-            "name": "Reunión de equipo",
-            "date": "2025-03-23T10:00:00.000Z",
-            "id": 1
-        },
-        {
-            "name": "Llamada con cliente",
-            "date": "2025-03-23T08:00:00.000Z",
-            "id": 2
-        },
-        {
-            "name": "Presentación de proyecto",
-            "date": "2025-03-23T14:00:00.000Z",
-            "id": 3
-        },
-        {
-            "name": "Revisión de tareas",
-            "date": "2025-03-23T16:00:00.000Z",
-            "id": 4
-        },
-        {
-            "name": "Entrenamiento",
-            "date": "2025-03-23T18:00:00.000Z",
-            "id": 5
-        },
-    ];
+    const { dateSelected, eventos, eliminarEvento } = useEventContext();
 
     const handleClose = () => setIsOpen(false);
+
+    const deleteEvent = (id: number) => {
+        eliminarEvento(id);
+        toast.error('Evento eliminado');
+    }
+
+    const eventosDelDia = eventos.filter((evento: Evento) => dayjs(evento.date).isSame(dateSelected, 'day'));
 
     return (
         <Modal
@@ -68,7 +49,7 @@ export default function DetailedEventModal({ isOpen, setIsOpen }: BasicModalProp
             aria-describedby="modal-modal-description"
         >
             <Box sx={modalStyle}>
-                {/* Botón de cerrar en la esquina superior derecha */}
+                {/* Botón de cerrar el modal */}
                 <IconButton
                     onClick={handleClose}
                     sx={{
@@ -87,20 +68,21 @@ export default function DetailedEventModal({ isOpen, setIsOpen }: BasicModalProp
                 </Typography>
 
                 {/* Mensaje si no hay eventos */}
-                {eventos.length === 0 && (
-                    <Typography sx={{ textAlign: 'center', color: 'text.secondary', my: 2 }}>
+                {eventosDelDia.length === 0 && (
+                    <Typography sx={{ color: 'text.secondary', my: 2 }}>
                         No hay eventos para este día.
                     </Typography>
                 )}
 
                 {/* Lista de eventos */}
                 <Box sx={{ maxHeight: '60vh', overflowY: 'auto', pr: 2 }}>
-                    {eventos.map((evento: Evento) => (
+                    {eventosDelDia.map((evento: Evento) => (
                         <Box
                             key={evento.id}
                             sx={{
                                 display: 'flex',
                                 alignItems: 'center',
+                                justifyContent: 'space-between', // 🆕 Alinea el botón de eliminar
                                 py: 1.5,
                                 borderBottom: '1px solid',
                                 borderColor: 'divider',
@@ -109,22 +91,29 @@ export default function DetailedEventModal({ isOpen, setIsOpen }: BasicModalProp
                                 },
                             }}
                         >
-                            {/* Hora del evento */}
-                            <Typography
-                                variant="body2"
-                                sx={{
-                                    fontWeight: 'bold',
-                                    minWidth: 60,
-                                    color: 'primary.main',
-                                }}
-                            >
-                                {dayjs(evento.date).format("HH:mm")}
-                            </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                {/* Hora del evento */}
+                                <Typography
+                                    variant="body2"
+                                    sx={{
+                                        fontWeight: 'bold',
+                                        minWidth: 60,
+                                        color: 'primary.main',
+                                    }}
+                                >
+                                    {dayjs(evento.date).format("HH:mm")}
+                                </Typography>
 
-                            {/* Nombre del evento */}
-                            <Typography variant="body1" sx={{ ml: 2 }}>
-                                {evento.name}
-                            </Typography>
+                                {/* Nombre del evento */}
+                                <Typography variant="body1" sx={{ ml: 2 }}>
+                                    {evento.name}
+                                </Typography>
+                            </Box>
+
+                            {/* Botón de eliminar */}
+                            <IconButton onClick={() => deleteEvent(evento.id)} color="error">
+                                <DeleteIcon />
+                            </IconButton>
                         </Box>
                     ))}
                 </Box>
