@@ -54,7 +54,7 @@ const CalendarGrid = () => {
 
     return (
         <div className="w-full h-full relative">
-            <div className="absolute -top-5 bg-green-200 w-full grid grid-cols-7">
+            <div className="absolute -top-5 bg-[#1565C0]/90 text-white font-bold w-full grid grid-cols-7">
                 {weekDays.map((day, index) => (
                     <div key={index} className="text-center">{day.initial}</div>
                 ))}
