@@ -41,6 +41,7 @@ const SideMenu = () => {
                     slotProps={{
                         actionBar: { actions: [] }, // Remove cancel and ok buttons
                     }}
+                    
                 />
             </div>
             <BasicModal isOpen={isOpen} setIsOpen={setIsOpen} />

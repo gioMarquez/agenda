@@ -9,6 +9,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import React, { useState } from 'react';
 import { useEventContext } from '../../../context/useEventContext';
 import TimeSelect from '../TimeSelect/TimeSelect';
+import toast from 'react-hot-toast';
 
 const style = {
     position: 'absolute',
@@ -62,6 +63,7 @@ export default function BasicModal({ isOpen, setIsOpen, dateSelected = dayjs() }
             const eventDateTime = dateToSave?.hour(timeStart.hour()).minute(timeStart.minute());
             agregarEvento({ name: eventName, date: eventDateTime?.toISOString() || '' });
             setIsOpen(false);
+            toast.success('Evento agregado correctamente')
             cleanInfo()
         }
     };

@@ -5,6 +5,7 @@ import { useEventContext } from "../../../context/useEventContext"
 import { Usuario } from "../../../interfaces/Usuario"
 import CalendarGrid from "../../molecules/CalendarGrid/CalendarGrid"
 import SideMenu from "../../molecules/SideMenu/SideMenu"
+import { Toaster } from "react-hot-toast"
 
 const ScheduleTemplate = () => {
     const [users, setUsers] = useState<Usuario[]>([])
@@ -60,6 +61,7 @@ const ScheduleTemplate = () => {
                 <CalendarGrid />
                 {/* <CalendarGrid /> */}
             </div>
+            <div><Toaster /></div>
             {/* {users.map((user: Usuario) => (
         <CardUser key={user.id} id={user.id} name={user.name} />
 
