@@ -1,11 +1,12 @@
-import * as React from 'react';
+import { TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { Input, Select } from '@mui/material';
-import { DesktopDatePicker } from '@mui/x-date-pickers';
+import Typography from '@mui/material/Typography';
+import { DatePicker, DesktopDatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
+import React, { useState } from 'react';
+import { useEventContext } from '../../../context/useEventContext';
 import TimeSelect from '../TimeSelect/TimeSelect';
 
 const style = {
@@ -20,14 +21,48 @@ const style = {
     p: 4,
 };
 
+const inputStyle = {
+    width: '100%',
+    marginBottom: '16px',
+};
+
 interface BasicModalProps {
-    isOpen: boolean
-    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
-    dateSelected?: Dayjs
+    isOpen: boolean;
+    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    dateSelected?: Dayjs;
 }
 
 export default function BasicModal({ isOpen, setIsOpen, dateSelected = dayjs() }: BasicModalProps) {
+    const [timeStart, setTimeStart] = React.useState<Dayjs | null>(null);
+    const [eventName, setEventName] = React.useState<string>("");
+    const [newDateSelected, setNewDateSelected] = useState<Dayjs | null>(null)
+
     const handleClose = () => setIsOpen(false);
+
+    const { agregarEvento } = useEventContext();
+
+    const cleanInfo = () => {
+        setNewDateSelected(null)
+        setEventName("")
+        setTimeStart(null)
+
+    }
+
+
+
+
+
+    const handleSave = () => {
+        if (eventName && timeStart) {
+
+            const dateToSave = newDateSelected ? newDateSelected : dateSelected
+
+            const eventDateTime = dateToSave?.hour(timeStart.hour()).minute(timeStart.minute());
+            agregarEvento({ name: eventName, date: eventDateTime?.toISOString() || '' });
+            setIsOpen(false);
+            cleanInfo()
+        }
+    };
 
     return (
         <div>
@@ -41,16 +76,31 @@ export default function BasicModal({ isOpen, setIsOpen, dateSelected = dayjs() }
                     <Typography id="modal-modal-title" variant="h6" component="h2">
                         Agrega un nuevo evento
                     </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                        <Input placeholder='Nombre del evento' />
-                    </Typography>
 
-                    <DesktopDatePicker value={dateSelected} />
-                    <div className='pt-5'>
-                        <TimeSelect label='inicio' />  <TimeSelect label='fin'/>
+                    <TextField
+                        placeholder="Nombre del evento"
+                        fullWidth
+                        sx={inputStyle}
+                        value={eventName}
+                        onChange={(e) => setEventName(e.target.value)}
+                    />
+                    <DatePicker
+                        value={newDateSelected}
+                        onChange={(date) => { setNewDateSelected(date) }}
+                        // slots={{ textField: (props) => <TextField {...props} fullWidth sx={inputStyle} /> }}
+                    />
+                    <div className="pt-5">
+                        <TimeSelect
+                            label="Selecciona la hora"
+                            style={{ ...inputStyle }}
+                            onTimeChange={setTimeStart}
+                        />
                     </div>
-                    <div className='pt-5'>
-                        <Button variant='contained' >Guardar</Button>
+
+                    <div className="pt-5">
+                        <Button variant="contained" fullWidth onClick={handleSave}>
+                            Guardar
+                        </Button>
                     </div>
                 </Box>
             </Modal>

@@ -4,27 +4,43 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
 import React, { useState } from "react";
 
-const TimeSelect: React.FC = () => {
+interface TimeSelectProps {
+    label: string;
+    style?: React.CSSProperties;
+    onTimeChange?: (time: Dayjs | null) => void; // Added onTimeChange prop
+}
+
+const TimeSelect: React.FC<TimeSelectProps> = ({ label, style, onTimeChange }) => {
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
     const [selectedTime, setSelectedTime] = useState<Dayjs | null>(null);
 
-    // Función para generar intervalos de 30 minutos
+    const handleTimeChange = (newTime: Dayjs | null) => {
+        setSelectedTime(newTime);
+        if (onTimeChange) {
+            onTimeChange(newTime);
+        }
+    };
+
+    console.log("selectedTime", selectedTime)
+
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Stack spacing={2} sx={{ maxWidth: 300, margin: "auto" }}>
-                {/* Selector de Hora con Intervalos de 30 Minutos */}
+            <Stack spacing={2} sx={{ ...style, margin: "auto" }}> {/* Apply style prop */}
                 <TimePicker
-                    label="Selecciona una hora"
+                    label={label}
                     value={selectedTime}
-                    onChange={(newTime) => setSelectedTime(newTime)}
+                    onChange={handleTimeChange}
+                    sx={{ width: "100%" }} // Set the same width as inputs
                 />
 
                 {/* Mostrar la fecha y hora seleccionadas */}
                 {selectedDate && selectedTime && (
-                    <p>
+                    <div>
                         Fecha y hora seleccionada:{" "}
-                        <strong>{selectedDate.format("YYYY-MM-DD")} {selectedTime.format("HH:mm")}</strong>
-                    </p>
+                        <strong>
+                            {selectedDate.format("YYYY-MM-DD")} {selectedTime.format("HH:mm")}
+                        </strong>
+                    </div>
                 )}
             </Stack>
         </LocalizationProvider>
