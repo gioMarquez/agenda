@@ -5,6 +5,7 @@ dayjs.extend(weekday);
 import { useEventContext } from "../../../context/useEventContext";
 import DayItem from "../../atoms/DayItem/DayItem";
 import { useEffect, useState } from "react";
+import DetailedEventModal from "../../atoms/Modal/DetailedEventModal/DetailedEventModal";
 
 const getMonthDays = (date: Dayjs) => {
     return date.daysInMonth();
@@ -24,6 +25,7 @@ const CalendarGrid = () => {
     const { dateSelected, eventos, refreshFlag } = useEventContext(); // Added refreshFlag
     const [daysInMonth, setDaysInMonth] = useState<number>(getMonthDays(dateSelected));
     const [calendarDays, setCalendarDays] = useState<(Dayjs | null)[]>([]);
+    const [isOpenDetail, setIsOpenDetail] = useState(false);
 
     useEffect(() => {
         setDaysInMonth(getMonthDays(dateSelected));
@@ -75,10 +77,13 @@ const CalendarGrid = () => {
                             eventos={eventosDelDia}
                             className="border-2 h-[15vh]"
                             currentMonth={dateSelected.month()}
+                            setIsOpenDetail={() => setIsOpenDetail(true)}
+                            
                         />
                     );
                 })}
             </div>
+            <DetailedEventModal isOpen={isOpenDetail} setIsOpen={setIsOpenDetail}/>
         </div>
     );
 };

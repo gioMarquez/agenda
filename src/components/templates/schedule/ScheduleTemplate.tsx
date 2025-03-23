@@ -1,15 +1,15 @@
+import { Select } from "@mui/material"
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { useEventContext } from "../../../context/useEventContext"
 import { Usuario } from "../../../interfaces/Usuario"
 import CalendarGrid from "../../molecules/CalendarGrid/CalendarGrid"
 import SideMenu from "../../molecules/SideMenu/SideMenu"
-import { Select } from "@mui/material"
 
 const ScheduleTemplate = () => {
     const [users, setUsers] = useState<Usuario[]>([])
 
-    const { eventos, agregarEvento, eliminarEvento } = useEventContext()
+    const { eventos } = useEventContext()
 
     console.log("eventos", eventos)
     console.log("users", users)
@@ -31,7 +31,11 @@ const ScheduleTemplate = () => {
     return (
         <div className="grid grid-cols-12">
             <div className="col-span-12 h-[10vh]  flex items-center justify-between p-5">
-                <h1 className="text-xl">Agenda</h1>
+                <div>
+
+                    <h1 className="text-xl">Agenda</h1>
+                    
+                </div>
                 <Select
                     native
                     onChange={(e) => {

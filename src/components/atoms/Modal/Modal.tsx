@@ -1,5 +1,6 @@
-import { TextField } from '@mui/material';
+import { IconButton, TextField } from '@mui/material';
 import Box from '@mui/material/Box';
+import CloseIcon from '@mui/icons-material/Close';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
@@ -19,6 +20,7 @@ const style = {
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
+    borderRadius: 10,
 };
 
 const inputStyle = {
@@ -73,6 +75,17 @@ export default function BasicModal({ isOpen, setIsOpen, dateSelected = dayjs() }
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
+                    <IconButton
+                        onClick={handleClose}
+                        sx={{
+                            position: 'absolute',
+                            top: 8,
+                            right: 8,
+                            color: 'grey.500',
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
                     <Typography id="modal-modal-title" variant="h6" component="h2">
                         Agrega un nuevo evento
                     </Typography>

@@ -7,12 +7,13 @@ interface DayItemProps {
     eventos: Evento[];
     className?: string;
     currentMonth: number; // Mes actual (0 = Enero, 11 = Diciembre)
+    setIsOpenDetail: () => void;
 }
 
-const DayItem = ({ date, eventos, className, currentMonth }: DayItemProps) => {
+const DayItem = ({ date, eventos, className, currentMonth, setIsOpenDetail }: DayItemProps) => {
     // Verificar si el día pertenece al mes actual
     const isCurrentMonth = date ? date.month() === currentMonth : false;
-    const { dateSelected } = useEventContext();
+    const { dateSelected, setDateSelected } = useEventContext();
 
     // Filtrar los eventos que coinciden con la fecha actual
     const eventosDelDia = eventos.filter((evento) => {
@@ -26,10 +27,16 @@ const DayItem = ({ date, eventos, className, currentMonth }: DayItemProps) => {
         return eventos.sort((a, b) => dayjs(a.date).hour() - dayjs(b.date).hour() || dayjs(a.date).minute() - dayjs(b.date).minute());
     };
 
+    const handleClick = () => { 
+        setIsOpenDetail()
+        setDateSelected(dayjs(date))
+    }
+
     return (
         <div
             className={`${eventosDelDia.length ? "bg-green-200" : ""} ${!isCurrentMonth ? "text-gray-400" : "" // Aplicar estilo gris si no es del mes actual
                 } ${className}`}
+            onClick={handleClick}
         >
             {/* Mostrar el número del día */}
             <div
