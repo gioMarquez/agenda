@@ -3,14 +3,14 @@ import weekday from "dayjs/plugin/weekday";
 
 dayjs.extend(weekday);
 import { useEventContext } from "../../../context/useEventContext";
-import DayItem from "./DayItem";
+import DayItem from "../../atoms/DayItem/DayItem";
 import { useEffect, useState } from "react";
 
 const getMonthDays = (date: Dayjs) => {
     return date.daysInMonth();
 };
 
-const MontGrid = () => {
+const CalendarGrid = () => {
     const weekDays = [
         { numberDay: 1, nameDay: "Lunes", initial: "L" },
         { numberDay: 2, nameDay: "Martes", initial: "M" },
@@ -83,4 +83,4 @@ const MontGrid = () => {
     );
 };
 
-export default MontGrid;
+export default CalendarGrid;

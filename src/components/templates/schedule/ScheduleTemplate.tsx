@@ -2,15 +2,17 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { useEventContext } from "../../../context/useEventContext"
 import { Usuario } from "../../../interfaces/Usuario"
-import MontGrid from "../../atoms/MontGrid/MontGrid"
-import SideMenu from "../../atoms/SideMenu/SideMenu"
+import CalendarGrid from "../../molecules/CalendarGrid/CalendarGrid"
+import SideMenu from "../../molecules/SideMenu/SideMenu"
+import { Select } from "@mui/material"
 
 const ScheduleTemplate = () => {
     const [users, setUsers] = useState<Usuario[]>([])
 
-    const { eventos, agregarEvento, eliminarEvento} = useEventContext()
+    const { eventos, agregarEvento, eliminarEvento } = useEventContext()
 
     console.log("eventos", eventos)
+    console.log("users", users)
 
 
     //obteniendo usuarios
@@ -28,10 +30,30 @@ const ScheduleTemplate = () => {
 
     return (
         <div className="grid grid-cols-12">
-            <div className="col-span-12 h-[10vh]">Menu superior</div>
-            <div className="bg-red-300 col-span-3 h-[90vh]"><SideMenu /></div>
-            <div className="bg-blue-300 col-span-9">
-                <MontGrid />
+            <div className="col-span-12 h-[10vh]  flex items-center justify-between p-5">
+                <h1 className="text-xl">Agenda</h1>
+                <Select
+                    native
+                    onChange={(e) => {
+                        const selectedId = e.target.value;
+                        console.log("Selected ID:", selectedId);
+                    }}
+                >
+                    <option value="" disabled>
+                        Selecciona un usuario
+                    </option>
+                    {users.map((user) => (
+                        <option key={user.id} value={user.id}>
+                            {user.name}
+                        </option>
+                    ))}
+                </Select>
+            </div>
+            <div className=" col-span-3 h-[90vh]">
+                <SideMenu />
+            </div>
+            <div className=" col-span-9">
+                <CalendarGrid />
                 {/* <CalendarGrid /> */}
             </div>
             {/* {users.map((user: Usuario) => (
